@@ -1,13 +1,4 @@
-require 'tty-prompt'
-require 'pry'
-require_relative 'config/environment'
-require_relative "../lib/helper.rb"
-require_relative "../lib/car"
-require_relative "../lib/customer.rb"
-require_relative "../lib/services.rb"
-require_relative "../lib/manager.rb"
-require_relative "../lib/mechanic.rb"
-require_relative "../lib/job.rb"
+require_relative '../config/environment'
 
 norman = Manager.new("norman")
 wing = norman.new_hire("wing")
