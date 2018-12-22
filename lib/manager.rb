@@ -1,12 +1,11 @@
-class Manager
-  @@all = []
+class Manager < ActiveRecord::Base
 
-  attr_reader :name
-  
-  def initialize(name)
-    @name = name
-    @@all << self
-  end
+  has_many :mechanics
+
+  # def initialize(hash)
+  #   super
+  #   @name = hash[:name]
+  # end
 
   def name_exists?(name)
       puts "Name already exists. Please enter a nickname!"
@@ -15,15 +14,18 @@ class Manager
   end
 
 
-  def new_hire (name)
+  def new_hire (hash)
+    hash[:manager] = self
+    hash[:job] = 0
     if Mechanic.all.empty?
-      name = Mechanic.new(name, self)
+      name = Mechanic.create(hash)
     else
       Mechanic.all.each do |mechanic|
         if mechanic.name == (name)
           name_exists?(name)
         else
-          name = Mechanic.new(name, self)
+          name = Mechanic.create(hash)
+          binding.pry
         end
       end
     end
@@ -35,7 +37,6 @@ class Manager
     least_busy = ""
 
     queued_car = Car.all.find do |car|
-      car.status == "pending"
       Mechanic.all.each do |mechanic|
         if counter == 0
           lowest_queue = mechanic.job
@@ -44,20 +45,17 @@ class Manager
         elsif mechanic.job < lowest_queue
           lowest_queue = mechanic.job
           least_busy = mechanic
-
         end
       end
     end
-
     least_busy.job += 1
-    queued_car.status = "In Progress"
-    Job.new(least_busy, queued_car)
+    hash = {}
+    hash[:mechanic] = least_busy
+    hash[:car] = queued_car
+    hash[:diagnosis] = "To be determined..."
+    Job.create(hash)
   end
 
-
-  def self.all
-    @@all
-  end
 end
 
 

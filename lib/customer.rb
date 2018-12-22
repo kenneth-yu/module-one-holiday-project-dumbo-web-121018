@@ -1,26 +1,22 @@
-class Customer
-  @@all = []
+class Customer < ActiveRecord::Base
 
-  attr_accessor :car, :reason
-  attr_reader :name
+  has_many :cars
 
-  def initialize(name, reason)
-    @name = name
-    @reason = reason
-    #@car = [] dont store relationship here
-    @@all << self
-  end
+  # def initialize(hash)
+  #   super
+  #   @name = hash[:name]
+  #   @reason = hash[:reason]
+  # end
 
-  def add_car(year, make, model)
-    Car.new(year, make, model, self)
+  def add_car(hash)
+    hash[:customer] = self
+    #Car.new(year, make, model, self)
+    Car.create(hash)
   end
 
   def place_in_line
   end
 
-  def self.all #returns all customers
-    @@all
-  end
 end
 
 

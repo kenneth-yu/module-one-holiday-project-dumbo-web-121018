@@ -1,16 +1,13 @@
-class Mechanic
-  @@all = []
+class Mechanic < ActiveRecord::Base
 
-  attr_reader :name
-  attr_accessor :job
+  has_many :cars, through: :jobs
+  has_many :jobs
+  belongs_to :manager
 
-  def initialize(name, manager)
-    @name = name
-    @manager = manager
-    @job = 0
-    @@all << self
-  end
-
+  # def initialize(hash)
+  #   super
+  #   @name = hash[:name]
+  # end
 
   def relevant_current_jobs
     relevant_jobs = Job.current_jobs.select do |job|
@@ -24,7 +21,6 @@ class Mechanic
     if relevant_jobs.count == 0
       puts "Congrats! You don't have any cars to fix!"
     elsif relevant_jobs.count > 0
-      # binding.pry
       puts "Your current job is to fix #{relevant_jobs[0].car.fullname}. The customer's reason for visit is #{relevant_jobs[0].car.customer.reason}"
     end
   end
@@ -38,25 +34,20 @@ class Mechanic
     end
   end
 
-  def work
+  def work #need to change to find jobs where status is true
     completed_job = Job.current_jobs.find do |job|
       if self == job.mechanic
-        job.car.status = "Completed"
+        job.car.status = true
         self.job -= 1
       end
     end
     Job.current_jobs.delete(completed_job)
   end
 
-  def help
-    puts "These are the functions you can call as a Mechanic:"
-    Mechanic.instance_methods(false)
-  end
-
-
-  def self.all
-    @@all
-  end
+  # def help  #should not need this thanks to TTY Prompt Gem
+  #   puts "These are the functions you can call as a Mechanic:"
+  #   Mechanic.instance_methods(false)
+  # end
 
 end
 

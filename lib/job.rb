@@ -1,25 +1,22 @@
-class Job
-  @@all = []
-  @@current_jobs = []
-  attr_reader :mechanic, :car
+class Job < ActiveRecord::Base
 
-  def initialize(mechanic, car)
-    @mechanic = mechanic
-    @car = car
-    @@all << self
-    @@current_jobs << self
-  end
+  belongs_to :car
+  belongs_to :mechanic
 
-  def self.current_jobs
-    @@current_jobs
-  end
 
-  def self.all
-    @@all
-  end
+  # def initialize(hash)
+  #   super
+  # #  @mechanic = hash[:mechanic]
+  #   #@car = hash[:car]
+  #end
+
+  # def completed?
+  #   @status
+  # end
+
 end
 
 
-# Jobs 
+# Jobs
 #
 # id | mechanic | car | current_jobs |

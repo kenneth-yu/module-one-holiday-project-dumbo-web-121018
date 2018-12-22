@@ -92,7 +92,7 @@ def new_or_old (response)
     name = prompt.ask("What is your name?")
     reason = prompt.ask("What is your reason for your visit?")
     #CREATE NEW CUSTOMER OBJECT USING CL INPUTS
-    return Customer.new(name,reason)
+    return Customer.create(name,reason)
   elsif response == "Old"
     name = prompt.ask("Welcome back! What is your name?")
     reason = prompt.ask("What is the reason for your visit?")

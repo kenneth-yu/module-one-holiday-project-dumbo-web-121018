@@ -1,23 +1,19 @@
-class Car
-  @@all = []
+class Car < ActiveRecord::Base
 
-  attr_reader :year, :make, :model, :customer , :fullname
-  attr_accessor :status, :diagnosis
+  has_many :mechanics,  through: :jobs
+  has_many :jobs
+  belongs_to :customer
 
-  def initialize(year, make, model, customer)
-    @make = make
-    @model = model
-    @year = year
-    @fullname = year + " " + make + " " + model
-    @customer = customer
-    @diagnosis = "TBD"
-    @status = "Pending"
-    @@all << self
-  end
-
-  def self.all #returns all cars
-    @@all << self
-  end
+  # def initialize(hash)
+  #   super
+  #   #@make = hash[:make]
+  #   #@model = hash[:model]
+  #   #@year = hash[:year]
+  #   #@fullname = year + " " + make + " " + model
+  #   #@customer = hash[:customer]
+  #   @diagnosis = nil
+  #   @status = "Pending"
+  # end
 
 end
 
