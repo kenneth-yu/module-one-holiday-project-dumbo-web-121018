@@ -8,7 +8,7 @@ class Job < ActiveRecord::Base
   #   super
   # #  @mechanic = hash[:mechanic]
   #   #@car = hash[:car]
-  #end
+  # end
 
   # def completed?
   #   @status

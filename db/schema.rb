@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181222231618) do
+ActiveRecord::Schema.define(version: 20190102143607) do
 
   create_table "cars", force: :cascade do |t|
     t.string  "make"
     t.string  "model"
     t.integer "year"
     t.integer "customer_id"
+    t.boolean "in_queue",    default: true
   end
 
   create_table "customers", force: :cascade do |t|

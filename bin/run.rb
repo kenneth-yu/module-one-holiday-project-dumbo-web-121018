@@ -9,5 +9,7 @@ require_relative '../config/environment'
 # norman.assign_job
 # user = welcome
 
+welcome
+
 
 binding.pry

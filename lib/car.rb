@@ -9,7 +9,7 @@ class Car < ActiveRecord::Base
   #   #@make = hash[:make]
   #   #@model = hash[:model]
   #   #@year = hash[:year]
-  #   #@fullname = year + " " + make + " " + model
+  #@fullname = year + " " + make + " " + model
   #   #@customer = hash[:customer]
   #   @diagnosis = nil
   #   @status = "Pending"

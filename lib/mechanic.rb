@@ -9,41 +9,70 @@ class Mechanic < ActiveRecord::Base
   #   @name = hash[:name]
   # end
 
+  def mechanic_options
+    prompt = TTY::Prompt.new
+    choices = [
+      {name: 'Current Jobs'},
+      {name: 'Next Job'},
+      {name: 'Work'},
+      {name: 'Log out'}
+    ]
+    response = prompt.select("What would you like to do?", choices)
+    binding.pry
+    if response == "Current Jobs"
+      self.jobs
+    elsif response == 'Next Job'
+      self.next_job
+    elsif response == 'Work'
+      self.work
+    else
+      prompt.say ("Logging out!")
+      exit
+    end
+  end
+
   def relevant_current_jobs
-    relevant_jobs = Job.current_jobs.select do |job|
+    relevant_jobs = Job.select do |job|
       job.mechanic == self
     end
   end
 
   def jobs
+    prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
-    puts "You currently have #{relevant_jobs.count} assigned to you"
+    prompt.say("You currently have #{relevant_jobs.count} assigned to you")
     if relevant_jobs.count == 0
-      puts "Congrats! You don't have any cars to fix!"
+      prompt.say("Congrats! You don't have any cars to fix!")
     elsif relevant_jobs.count > 0
-      puts "Your current job is to fix #{relevant_jobs[0].car.fullname}. The customer's reason for visit is #{relevant_jobs[0].car.customer.reason}"
+      prompt.say("Your current job is to fix #{relevant_jobs[0].car.year} #{relevant_jobs[0].car.make} #{relevant_jobs[0].car.model}. The customer's reason for visit is #{relevant_jobs[0].car.customer.reason}")
     end
+    mechanic_options
   end
 
   def next_job
+    prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
     if relevant_jobs.count > 1
-      p "Your next job is to fix #{relevant_jobs[1].car.fullname}. The customer's reason for visit is #{relevant_jobs[1].car.customer.reason}"
+      prompt.say("Your next job is to fix #{relevant_jobs[0].car.year} #{relevant_jobs[0].car.make} #{relevant_jobs[0].car.model}. The customer's reason for visit is #{relevant_jobs[1].car.customer.reason}")
     else
-      p "Congrats! You have not been assigned another job yet!"
+      prompt.say ("Congrats! You have not been assigned another job yet!")
     end
+    mechanic_options
   end
 
   def work #need to change to find jobs where status is true
-    completed_job = Job.current_jobs.find do |job|
-      if self == job.mechanic
-        job.car.status = true
+    prompt = TTY::Prompt.new
+    completed_job = Job.all.find do |job|
+      if self == job.mechanic && job.status == false
+        job.status = true
         self.job -= 1
+        self.save
+        job.save
       end
     end
-    Job.current_jobs.delete(completed_job)
+    prompt.say("Job Completed")
+    mechanic_options
   end
-
   # def help  #should not need this thanks to TTY Prompt Gem
   #   puts "These are the functions you can call as a Mechanic:"
   #   Mechanic.instance_methods(false)
