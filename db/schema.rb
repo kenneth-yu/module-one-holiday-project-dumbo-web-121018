@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190102143607) do
+ActiveRecord::Schema.define(version: 20190102191407) do
 
   create_table "cars", force: :cascade do |t|
     t.string  "make"
@@ -18,11 +18,11 @@ ActiveRecord::Schema.define(version: 20190102143607) do
     t.integer "year"
     t.integer "customer_id"
     t.boolean "in_queue",    default: true
+    t.string  "complaint",   default: ""
   end
 
   create_table "customers", force: :cascade do |t|
     t.string "name"
-    t.string "reason"
   end
 
   create_table "jobs", force: :cascade do |t|

@@ -1,5 +1,19 @@
 def welcome
-  puts "Welcome to AoR Repair Shop!"
+  # puts "Welcome to AoR Repair Shop!"
+  puts <<-'EOF'
+
+                                  _    ___  ____
+                                 / \  / _ \|  _ \       _.-.___\__
+                                / _ \| | | | |_) |     |  _      _`-.
+                               / ___ \ |_| |  _ <      '-(_)----(_)--`
+       _         _          __/_/   \_\___/|_| \_\_        ____  _
+      / \  _   _| |_ ___   |  _ \ ___ _ __   __ _(_)_ __  / ___|| |__   ___  _ __
+     / _ \| | | | __/ _ \  | |_) / _ \ '_ \ / _` | | '__| \___ \| '_ \ / _ \| '_ \
+    / ___ \ |_| | || (_) | |  _ <  __/ |_) | (_| | | |     ___) | | | | (_) | |_) |
+   /_/   \_\__,_|\__\___/  |_| \_\___| .__/ \__,_|_|_|    |____/|_| |_|\___/| .__/
+                                     |_|                                    |_|
+
+EOF
   welcome_prompts
 end
 
@@ -9,20 +23,6 @@ def recursive_customer(input)
   if input == 'Customer'
     response = prompt.select("Are you a new or old customer?", %w(New Old))
     found_customer = new_or_old(response).customer_options
-     # if found_customer == nil
-     #   response = prompt.select("Customer not found... Would you like to try again?", %w(Yes No))
-     #   if response == "Yes"
-     #     recursive_customer('Customer')
-     #   else
-     #     response = prompt.select("Do you want to pick a different role?", %w(Yes No))
-     #     if response == "Yes"
-     #       welcome_prompts
-     #     end
-     #   end
-     # else
-     #   prompt.say("Profile Found!")
-     #   return found_customer
-     # end
   end
 end
 
@@ -75,14 +75,16 @@ def welcome_check (input)
     return recursive_customer(input)
   elsif input == 'Mechanic'
     return recursive_mechanic_search(input)
-  else
+  elsif input == 'Manager'
     return recursive_manager_search(input)
+  else
+    exit
   end
 end
 
 def welcome_prompts
   prompt = TTY::Prompt.new
-  role_response = prompt.select("Are you a Customer, Mechanic, or a Manager?", %w(Customer Mechanic Manager))
+  role_response = prompt.select("Are you a Customer, Mechanic, or a Manager?", %w(Customer Mechanic Manager Exit))
   welcome_check(role_response)
 end
 
@@ -93,6 +95,7 @@ def recursive_new_customer(name)
     recursive_new_customer(name)
     return name
   end
+  name
 end
 
 
@@ -101,12 +104,10 @@ def new_or_old (response)
   if response == "New"
     name = prompt.ask("What is your name?")
     name = recursive_new_customer(name)
-    reason = prompt.ask("What is the reason for your visit?")
     hash = {}
     hash[:name] = name
-    hash[:reason] = reason
-    #CREATE NEW CUSTOMER OBJECT USING CL INPUTS
-    return Customer.create(hash)
+    new_customer = Customer.create(hash)
+    return new_customer
   elsif response == "Old"
     name = prompt.ask("Welcome back! What is your name?")
     found_customer = search_customer(name)
@@ -120,10 +121,6 @@ def new_or_old (response)
           welcome_prompts
         end
       end
-    else
-      reason = prompt.ask("What is the reason for your visit?")
-      found_customer.update(reason: reason)
-      binding.pry
     end
   end
   return found_customer

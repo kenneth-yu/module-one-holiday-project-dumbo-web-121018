@@ -2,10 +2,6 @@ class Manager < ActiveRecord::Base
 
   has_many :mechanics
 
-  # def initialize(hash)
-  #   super
-  #   @name = hash[:name]
-  # end
 
   def name_exists?(hash)
       prompt = TTY::Prompt.new
@@ -22,7 +18,10 @@ class Manager < ActiveRecord::Base
       {name: "Hire a Mechanic", value: "Hire"},
       # {name: "My Mechanics", value: "My Mechanics"},
       {name: "Fire a Mechanic", value: "Fire"},
-      {name: "Assign a Job", value: "Assign"}
+      {name: "Queued Jobs", value: "Jobs"},
+      {name: "Assign a Job", value: "Assign"},
+      {name: "Log Out", value: "quit"}
+
     ]
     response = prompt.select("What would you like to do?", choices)
     if response == "Hire"
@@ -34,12 +33,18 @@ class Manager < ActiveRecord::Base
     #   my_mechanics.
     elsif response == "Fire"
       self.fire_mechanic
-    elsif
+    elsif response == "Jobs"
+      prompt.say("#{cars_in_queue.size}")
+      self.manager_options
+    elsif response == "Assign"
       self.assign_job
+    else
+      exit
     end
   end
 
   def new_hire (hash)
+    prompt = TTY::Prompt.new
     hash[:manager] = self
     hash[:job] = 0
     if Mechanic.all.empty?
@@ -55,35 +60,53 @@ class Manager < ActiveRecord::Base
       end
     end
     manager_options
+    prompt.say("Mechanic Hired!")
+  end
+
+  def cars_in_queue
+    Car.all.select do |car|
+      car.in_queue == true
+    end
   end
 
   def assign_job #change in future to be more manual
+    prompt = TTY::Prompt.new
     counter = 0
     lowest_queue = 0
     least_busy = ""
     queued_car = Car.all.find do |car|
       car.in_queue == true
     end
-    queued_car.in_queue = false
-    queued_car.save
-    Mechanic.all.each do |mechanic|
-      if counter == 0
-        lowest_queue = mechanic.job
-        least_busy = mechanic
-        counter +=1
-      elsif mechanic.job < lowest_queue
-        lowest_queue = mechanic.job
-        least_busy = mechanic
+     if cars_in_queue.empty? == true
+       prompt.say("There are no Jobs to be Assigned to a Mechanic!")
+       manager_options
+    else
+      queued_car.in_queue = false
+      queued_car.save
+      if Mechanic.all.empty? == true
+        prompt.say("You have no Mechanics! Hire some!")
+      else
+        Mechanic.all.each do |mechanic|
+          if counter == 0
+            lowest_queue = mechanic.job
+            least_busy = mechanic
+            counter +=1
+          elsif mechanic.job < lowest_queue
+            lowest_queue = mechanic.job
+            least_busy = mechanic
+          end
+        end
+        least_busy.job += 1
+        least_busy.save
+        hash = {}
+        hash[:mechanic] = least_busy
+        hash[:car] = queued_car
+        hash[:diagnosis] = "To be determined..."
+        Job.create(hash)
+        prompt.say("Job Assigned!")
+        manager_options
       end
     end
-    least_busy.job += 1
-    least_busy.save
-    hash = {}
-    hash[:mechanic] = least_busy
-    hash[:car] = queued_car
-    hash[:diagnosis] = "To be determined..."
-    Job.create(hash)
-    manager_options
   end
 
   def my_mechanics
@@ -105,6 +128,7 @@ class Manager < ActiveRecord::Base
     else
       response.destroy
     end
+    prompt.say("Mechanic Fired!")
     manager_options
   end
 
