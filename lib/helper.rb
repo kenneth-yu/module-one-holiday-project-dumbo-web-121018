@@ -125,17 +125,21 @@ def new_or_old (response)
       if found_customer == nil
         response = prompt.select("Customer not found... Would you like to try again?", %w(Yes No))
         if response == "Yes"
-          new_or_old('Old')
+          return new_or_old('Old')
         else
           response = prompt.select("Do you want to pick a different role?", %w(Yes No))
           if response == "Yes"
             welcome_prompts
+          else
+            sleep(2)
+            exit
           end
         end
       end
     end
   end
-  return found_customer
+  #binding.pry
+  found_customer
 end
 
 def search_customer(name)

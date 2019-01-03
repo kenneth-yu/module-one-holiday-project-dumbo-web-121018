@@ -1,6 +1,6 @@
 class Customer < ActiveRecord::Base
 
-  has_many :cars
+  has_many :cars, :dependent => :destroy
 
   def customer_options #Customer "Main Menu"
     prompt = TTY::Prompt.new
@@ -15,8 +15,13 @@ class Customer < ActiveRecord::Base
     if response == 'Add Cars'
       self.add_car
     elsif response == 'Registered Cars'
-      my_cars.each do |car|
-        prompt.ok ("#{car.year} #{car.make} #{car.model}")
+      if my_cars.empty? == true
+        prompt.warn("You have no cars registered! Add a car first!")
+        self.customer_options
+      else
+        my_cars.each do |car|
+          prompt.ok ("#{car.year} #{car.make} #{car.model}")
+        end
       end
     elsif response == 'Remove Cars'
       if my_cars.empty? == true
@@ -87,10 +92,13 @@ class Customer < ActiveRecord::Base
     my_cars.map do |car|
       choices << {name: "#{car.year.to_s + ' '+ car.make + ' ' + car.model}", value: car}
     end
+    choices << {name: "Go Back", value: "back"}
     choices << {name: "Exit", value: "Quit"}
     response = prompt.select("Which car would you like to remove?", choices)
     if response == "Quit"
       exit
+    elsif response == "back"
+      self.customer_options
     else
       response.destroy
       prompt.ok("Car removed!")

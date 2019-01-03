@@ -1,7 +1,7 @@
 class Mechanic < ActiveRecord::Base
 
   has_many :cars, through: :jobs
-  has_many :jobs
+  has_many :jobs, :dependent=> :destroy
   belongs_to :manager
 
   def mechanic_options #Mechanic's "Main Menu"

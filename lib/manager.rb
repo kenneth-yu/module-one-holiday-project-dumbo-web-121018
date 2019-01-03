@@ -1,6 +1,6 @@
 class Manager < ActiveRecord::Base
 
-  has_many :mechanics
+  has_many :mechanics, :dependent =>:destroy
 
   def manager_options #Manager "Main Menu"
     prompt = TTY::Prompt.new
@@ -137,9 +137,18 @@ class Manager < ActiveRecord::Base
       Mechanic.all.each do |mechanic|
         list2 << {name: "#{mechanic.name} - #{mechanic.job} job(s) assigned", value: mechanic}
       end
+      list1 << {name: "Go Back"}
+      list2 << {name: "Go Back"}
       response = prompt.select("Which car would you like to choose for repair?",list1)
-      response2 = prompt.select("Which mechanic would you like to assign to the repair?", list2)
-
+      if response == "Go Back"
+        manager_options
+      else
+        response2 = prompt.select("Which mechanic would you like to assign to the repair?", list2)
+        if response2 == "Go Back"
+          manager_options
+        end
+      end
+      response.update(in_queue: false)
       hash={}
       hash[:mechanic] = response2
       hash[:car] = response
