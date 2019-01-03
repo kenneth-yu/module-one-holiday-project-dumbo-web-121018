@@ -19,7 +19,8 @@ class Manager < ActiveRecord::Base
       {name: "Hire a Mechanic", value: "Hire"},
       {name: "Fire a Mechanic", value: "Fire"},
       {name: "Queued Jobs", value: "Jobs"},
-      {name: "Assign a Job", value: "Assign"},
+      {name: "Automatically Assign a Job", value: "QAssign"},
+      {name: "Manually Assign a Job", value: "MAssign"},
       # {name: "Search Completed Jobs", value: "Search"},
       {name: "Log Out", value: "quit"}
 
@@ -37,8 +38,10 @@ class Manager < ActiveRecord::Base
     elsif response == "Jobs"
       prompt.ok("#{cars_in_queue.size}")
       self.manager_options
-    elsif response == "Assign"
+    elsif response == "QAssign"
       self.assign_job
+    elsif response == "MAssign"
+      self.manually_assign_job
     # elsif response == "Search"
     #   self.search_completed_job
     else
@@ -116,6 +119,41 @@ class Manager < ActiveRecord::Base
     end
   end
 
+  def manually_assign_job
+    prompt = TTY::Prompt.new
+    list1 = []
+    list2 = []
+    if cars_in_queue.empty? == true
+      prompt.warn("There are no Jobs to be Assigned to a Mechanic!")
+      sleep(2)
+      manager_options
+    elsif Mechanic.all.empty? == true
+        prompt.warn("You have no Mechanics! Hire some!")
+        sleep(2)
+        manager_options
+    else
+      cars_in_queue.each do |car|
+        list1 << {name: "#{car.year} #{car.make} #{car.model}", value: car}
+      end
+      Mechanic.all.each do |mechanic|
+        list2 << {name: "#{mechanic.name} - #{mechanic.job} job(s) assigned", value: mechanic}
+      end
+      response = prompt.select("Which car would you like to choose for repair?",list1)
+      response2 = prompt.select("Which mechanic would you like to assign to the repair?", list2)
+
+      hash={}
+      hash[:mechanic] = response2
+      hash[:car] = response
+      hash[:diagnosis] = "To be determined..."
+      Job.create(hash)
+      prompt.ok("Job Assigned!")
+      response2.job += 1
+      response2.save
+      sleep(2)
+      manager_options
+    end
+  end
+
   def my_mechanics
     Mechanic.all.select do |mechanic|
       mechanic.manager == self
@@ -153,7 +191,7 @@ class Manager < ActiveRecord::Base
     counter = 0
     my_mechanics.each do |mechanic|
       if mechanic.manager == self
-        prompt.ok("#{mechanic.name}")
+        prompt.ok("#{mechanic.name} - #{mechanic.job} job(s) assigned")
         counter += 1
       end
     end

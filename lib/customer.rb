@@ -5,7 +5,7 @@ class Customer < ActiveRecord::Base
   def customer_options
     prompt = TTY::Prompt.new
     choices = [
-      # {name: 'Current Cars'},
+      {name: 'Registered Cars'},
       {name: 'Add Cars'},
       {name: 'Remove Cars'},
       {name: 'Queue a Car for Repair', value: "queue"},
@@ -14,6 +14,10 @@ class Customer < ActiveRecord::Base
     response = prompt.select("What would you like to do?", choices)
     if response == 'Add Cars'
       self.add_car
+    elsif response == 'Registered Cars'
+      my_cars.each do |car|
+        prompt.ok ("#{car.year} #{car.make} #{car.model}")
+      end
     elsif response == 'Remove Cars'
       if owned_cars.empty? == true
         prompt.warn("You have no cars to remove!")
@@ -29,6 +33,7 @@ class Customer < ActiveRecord::Base
       sleep(2)
       exit
     end
+    self.customer_options
   end
 
   def owned_cars
