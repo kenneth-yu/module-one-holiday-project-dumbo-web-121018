@@ -20,7 +20,8 @@ class Mechanic < ActiveRecord::Base
     elsif response == 'Work'
       self.work
     else
-      prompt.say ("Logging out!")
+      prompt.ok ("Logging out! Bye bye!")
+      sleep(2)
       exit
     end
   end
@@ -34,11 +35,11 @@ class Mechanic < ActiveRecord::Base
   def jobs
     prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
-    prompt.say("You currently have #{relevant_jobs.count} job(s) assigned to you...")
+    prompt.ok("You currently have #{relevant_jobs.count} job(s) assigned to you...")
     if relevant_jobs.count == 0
-      prompt.say("Congrats! You don't have any cars to fix!")
+      prompt.ok("Congrats! You don't have any cars to fix!")
     elsif relevant_jobs.count > 0
-      prompt.say("Your current job is to fix the #{relevant_jobs[0].car.year} #{relevant_jobs[0].car.make} #{relevant_jobs[0].car.model}. The customer's reason for visit is #{relevant_jobs[0].car.complaint}")
+      prompt.ok("Your current job is to fix the #{relevant_jobs[0].car.year} #{relevant_jobs[0].car.make} #{relevant_jobs[0].car.model}. The customer's reason for visit is #{relevant_jobs[0].car.complaint}")
     end
     self.mechanic_options
   end
@@ -47,9 +48,9 @@ class Mechanic < ActiveRecord::Base
     prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
     if relevant_jobs.count > 1
-      prompt.say("Your next job is to fix the #{relevant_jobs[1].car.year} #{relevant_jobs[1].car.make} #{relevant_jobs[1].car.model}. The customer's reason for visit is #{relevant_jobs[1].car.complaint}")
+      prompt.ok("Your next job is to fix the #{relevant_jobs[1].car.year} #{relevant_jobs[1].car.make} #{relevant_jobs[1].car.model}. The customer's reason for visit is #{relevant_jobs[1].car.complaint}")
     else
-      prompt.say ("Congrats! You have not been assigned another job yet!")
+      prompt.ok ("Congrats! You have not been assigned another job yet!")
     end
     self.mechanic_options
   end
@@ -57,7 +58,7 @@ class Mechanic < ActiveRecord::Base
   def work #need to change to find jobs where status is true
     prompt = TTY::Prompt.new
     if relevant_current_jobs.empty? == true
-      prompt.say ("There are no more Jobs to complete!")
+      prompt.ok ("There are no more Jobs to complete!")
       self.mechanic_options
     else
       completed_job = Job.all.find do |job|
@@ -70,7 +71,7 @@ class Mechanic < ActiveRecord::Base
           # job.save
         end
       end
-      prompt.say("Job Completed")
+      prompt.ok("Job Completed")
       self.mechanic_options
     end
   end

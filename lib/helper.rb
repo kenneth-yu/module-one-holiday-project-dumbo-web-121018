@@ -42,7 +42,7 @@ def recursive_mechanic_search(input)
         end
       end
     else
-      prompt.say("Profile Found!")
+      prompt.ok("Profile Found!")
       return found_mechanic.mechanic_options
     end
   end
@@ -63,7 +63,7 @@ def recursive_manager_search(input)
         end
       end
     else
-      prompt.say("Profile Found!")
+      prompt.ok("Profile Found!")
       found_manager.manager_options
       #return found_manager
     end
@@ -104,7 +104,7 @@ end
 def new_or_old (response)
   prompt = TTY::Prompt.new
   if response == "New"
-    name = prompt.ask("What is your name?")
+    name = prompt.ask("What is your name? (Case-Sensitive)")
       if name == "back"
         welcome_prompts
       elsif name == "exit"
@@ -117,7 +117,7 @@ def new_or_old (response)
         return new_customer
       end
   elsif response == "Old"
-    name = prompt.ask("Welcome back! What is your name?")
+    name = prompt.ask("Welcome back! What is your name? (Case-Sensitive)")
     if name == "back"
       welcome_prompts
     elsif name == "exit"
@@ -149,7 +149,7 @@ end
 
 def search_manager
   prompt = TTY::Prompt.new
-  response = prompt.ask("Which Manager are you?")
+  response = prompt.ask("Which Manager are you? (Case-Sensitive)")
   if response == "back"
     welcome_prompts
   elsif response == "exit"
@@ -163,7 +163,7 @@ end
 
 def search_mechanic
   prompt = TTY::Prompt.new
-  response = prompt.ask("Which Mechanic are you?")
+  response = prompt.ask("Which Mechanic are you? (Case-Sensitive)")
   if response == "back"
     welcome_prompts
   elsif response == "exit"

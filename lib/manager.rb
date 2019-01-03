@@ -5,7 +5,7 @@ class Manager < ActiveRecord::Base
 
   def name_exists?(hash)
       prompt = TTY::Prompt.new
-      response = prompt.ask("Name already exists. Please enter a nickname!")
+      response = prompt.ask("Name already exists. Please enter a nickname! (Case-Sensitive)")
       hash = {}
       hash[:name] = response
       #binding.pry
@@ -26,7 +26,7 @@ class Manager < ActiveRecord::Base
     ]
     response = prompt.select("What would you like to do?", choices)
     if response == "Hire"
-      response = prompt.ask("What is the name of the New Mechanic?")
+      response = prompt.ask("What is the name of the New Mechanic? (Case-Sensitive)")
       hash = {}
       hash[:name] = response
       self.new_hire(hash)
@@ -35,7 +35,7 @@ class Manager < ActiveRecord::Base
     elsif response == "Fire"
       self.fire_mechanic
     elsif response == "Jobs"
-      prompt.say("#{cars_in_queue.size}")
+      prompt.ok("#{cars_in_queue.size}")
       self.manager_options
     elsif response == "Assign"
       self.assign_job
@@ -62,8 +62,9 @@ class Manager < ActiveRecord::Base
         name_exists?(hash[:name])
       end
     end
+    prompt.ok("Mechanic Hired!")
+    sleep(2)
     manager_options
-    prompt.say("Mechanic Hired!")
   end
 
   def cars_in_queue
@@ -81,13 +82,15 @@ class Manager < ActiveRecord::Base
       car.in_queue == true
     end
      if cars_in_queue.empty? == true
-       prompt.say("There are no Jobs to be Assigned to a Mechanic!")
+       prompt.warn("There are no Jobs to be Assigned to a Mechanic!")
+       sleep(2)
        manager_options
     else
       queued_car.in_queue = false
       queued_car.save
       if Mechanic.all.empty? == true
-        prompt.say("You have no Mechanics! Hire some!")
+        prompt.warn("You have no Mechanics! Hire some!")
+        manager_options
       else
         Mechanic.all.each do |mechanic|
           if counter == 0
@@ -106,7 +109,8 @@ class Manager < ActiveRecord::Base
         hash[:car] = queued_car
         hash[:diagnosis] = "To be determined..."
         Job.create(hash)
-        prompt.say("Job Assigned!")
+        prompt.ok("Job Assigned!")
+        sleep(2)
         manager_options
       end
     end
@@ -126,16 +130,20 @@ class Manager < ActiveRecord::Base
     end
     choices << {name: "Exit", value: "Quit"}
     if my_mechanics.empty? == true
-      prompt.say("There are no Mechanics to fire!")
+      prompt.warn("There are no Mechanics to fire!")
+      sleep(2)
       self.manager_options
     else
       response = prompt.select("Which Mechanic would you like to fire?", choices)
       if response == "Quit"
+        prompt.ok("Logging Out! Bye bye!")
+        sleep(2)
         exit
       else
         response.destroy
       end
-      prompt.say("#{response.name} was Fired!")
+      prompt.ok("#{response.name} was Fired!")
+      sleep(2)
       manager_options
     end
   end
@@ -145,12 +153,13 @@ class Manager < ActiveRecord::Base
     counter = 0
     my_mechanics.each do |mechanic|
       if mechanic.manager == self
-        prompt.say("#{mechanic.name}")
+        prompt.ok("#{mechanic.name}")
         counter += 1
       end
     end
     if my_mechanics.empty? == true
-      prompt.say("You don't have any mechanics!")
+      prompt.warn("You don't have any mechanics!")
+      sleep(2)
       self.manager_options
     end
     manager_options

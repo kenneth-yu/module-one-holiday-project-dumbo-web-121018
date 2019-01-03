@@ -16,7 +16,8 @@ class Customer < ActiveRecord::Base
       self.add_car
     elsif response == 'Remove Cars'
       if owned_cars.empty? == true
-        prompt.say("You have no cars to remove!")
+        prompt.warn("You have no cars to remove!")
+        sleep(2)
         customer_options
       else
         self.remove_car
@@ -24,7 +25,8 @@ class Customer < ActiveRecord::Base
     elsif response == "queue"
       queue_car
     else
-      prompt.say ("Logging out!")
+      prompt.ok ("Logging out! Bye bye!")
+      sleep(2)
       exit
     end
   end
@@ -39,7 +41,8 @@ class Customer < ActiveRecord::Base
     prompt = TTY::Prompt.new
     choices = []
     if my_cars.empty? == true
-      prompt.say("You do not have any cars! Please add a car first!")
+      prompt.warn("You do not have any cars! Please add a car first!")
+      sleep(2)
       self.customer_options
     else
       my_cars.map do |car|
@@ -52,8 +55,8 @@ class Customer < ActiveRecord::Base
       else
         response1 = prompt.ask("What is wrong with the car?")
         response.update(complaint: "#{response1}")
+        prompt.ok("Car is queued for repair!")
         self.customer_options
-        prompt.say("Car is queued for repair!")
       end
     end
   end
@@ -70,8 +73,8 @@ class Customer < ActiveRecord::Base
     hash[:customer] = self
     #Car.new(year, make, model, self)
     Car.create(hash)
+    prompt.ok("Car added!")
     self.customer_options
-    prompt.say("Car added!")
   end
 
   def my_cars
@@ -92,7 +95,7 @@ class Customer < ActiveRecord::Base
       exit
     else
       response.destroy
-      prompt.say("Car removed!")
+      prompt.ok("Car removed!")
     end
     self.customer_options
   end
