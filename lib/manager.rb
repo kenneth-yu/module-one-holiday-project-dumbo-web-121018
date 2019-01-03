@@ -2,16 +2,6 @@ class Manager < ActiveRecord::Base
 
   has_many :mechanics
 
-
-  def name_exists?(hash) #Helper Function Checks to see if Name already exists in DB
-      prompt = TTY::Prompt.new
-      response = prompt.ask("Name already exists. Please enter a nickname! (Case-Sensitive)")
-      hash = {}
-      hash[:name] = response
-      #binding.pry
-      self.new_hire(hash)
-  end
-
   def manager_options #Manager "Main Menu"
     prompt = TTY::Prompt.new
     choices = [
@@ -23,7 +13,6 @@ class Manager < ActiveRecord::Base
       {name: "Manually Assign a Job", value: "MAssign"},
       # {name: "Search Completed Jobs", value: "Search"},
       {name: "Log Out", value: "quit"}
-
     ]
     response = prompt.select("What would you like to do?", choices)
     if response == "Hire"
@@ -42,12 +31,22 @@ class Manager < ActiveRecord::Base
       self.assign_job
     elsif response == "MAssign"
       self.manually_assign_job
-    # elsif response == "Search"
-    #   self.search_completed_job
+      # elsif response == "Search"
+      #   self.search_completed_job
     else
       exit
     end
   end
+
+  def name_exists?(hash) #Helper Function Checks to see if Name already exists in DB
+      prompt = TTY::Prompt.new
+      response = prompt.ask("Name already exists. Please enter a nickname! (Case-Sensitive)")
+      hash = {}
+      hash[:name] = response
+      #binding.pry
+      self.new_hire(hash)
+  end
+
 
   def new_hire (hash) #Creates a new Mechanic Object
     prompt = TTY::Prompt.new

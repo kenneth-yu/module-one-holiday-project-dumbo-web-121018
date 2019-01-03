@@ -18,8 +18,27 @@ EOF
   welcome_prompts
 end
 
-def recursive_customer(input) 
-  counter = 0
+def welcome_prompts
+  prompt = TTY::Prompt.new
+  role_response = prompt.select("Are you a Customer, Mechanic, or a Manager?", %w(Customer Mechanic Manager Exit))
+  welcome_check(role_response)
+end
+
+def welcome_check (input)
+  #Gem.win_platform? ? (system "cls") : (system "clear")
+  #prompt = TTY::Prompt.new
+  if input == 'Customer'
+    return recursive_customer(input)
+  elsif input == 'Mechanic'
+    return recursive_mechanic_search(input)
+  elsif input == 'Manager'
+    return recursive_manager_search(input)
+  else
+    exit
+  end
+end
+
+def recursive_customer(input)
   prompt = TTY::Prompt.new
   if input == 'Customer'
     response = prompt.select("Are you a new or old customer?", %w(New Old))
@@ -70,26 +89,6 @@ def recursive_manager_search(input)
   end
 end
 
-def welcome_check (input)
-  #Gem.win_platform? ? (system "cls") : (system "clear")
-  #prompt = TTY::Prompt.new
-  if input == 'Customer'
-    return recursive_customer(input)
-  elsif input == 'Mechanic'
-    return recursive_mechanic_search(input)
-  elsif input == 'Manager'
-    return recursive_manager_search(input)
-  else
-    exit
-  end
-end
-
-def welcome_prompts
-  prompt = TTY::Prompt.new
-  role_response = prompt.select("Are you a Customer, Mechanic, or a Manager?", %w(Customer Mechanic Manager Exit))
-  welcome_check(role_response)
-end
-
 def recursive_new_customer(name)
   prompt = TTY::Prompt.new
   if search_customer(name) != nil
@@ -100,22 +99,21 @@ def recursive_new_customer(name)
   name
 end
 
-
 def new_or_old (response)
   prompt = TTY::Prompt.new
   if response == "New"
     name = prompt.ask("What is your name? (Case-Sensitive)")
-      if name == "back"
-        welcome_prompts
-      elsif name == "exit"
-        exit
-      else
-        name = recursive_new_customer(name)
-        hash = {}
-        hash[:name] = name
-        new_customer = Customer.create(hash)
-        return new_customer
-      end
+    if name == "back"
+      welcome_prompts
+    elsif name == "exit"
+      exit
+    else
+      name = recursive_new_customer(name)
+      hash = {}
+      hash[:name] = name
+      new_customer = Customer.create(hash)
+      return new_customer
+    end
   elsif response == "Old"
     name = prompt.ask("Welcome back! What is your name? (Case-Sensitive)")
     if name == "back"
@@ -141,7 +139,6 @@ def new_or_old (response)
 end
 
 def search_customer(name)
-
   found_customer = Customer.all.find do |customer|
     customer.name == name
   end
