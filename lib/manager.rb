@@ -3,7 +3,7 @@ class Manager < ActiveRecord::Base
   has_many :mechanics
 
 
-  def name_exists?(hash)
+  def name_exists?(hash) #Helper Function Checks to see if Name already exists in DB
       prompt = TTY::Prompt.new
       response = prompt.ask("Name already exists. Please enter a nickname! (Case-Sensitive)")
       hash = {}
@@ -12,7 +12,7 @@ class Manager < ActiveRecord::Base
       self.new_hire(hash)
   end
 
-  def manager_options
+  def manager_options #Manager "Main Menu"
     prompt = TTY::Prompt.new
     choices = [
       {name: "My Mechanics", value: "My Mechanics"},
@@ -49,7 +49,7 @@ class Manager < ActiveRecord::Base
     end
   end
 
-  def new_hire (hash)
+  def new_hire (hash) #Creates a new Mechanic Object
     prompt = TTY::Prompt.new
     hash[:manager] = self
     hash[:job] = 0
@@ -70,13 +70,13 @@ class Manager < ActiveRecord::Base
     manager_options
   end
 
-  def cars_in_queue
+  def cars_in_queue #Helper function Returns Cars that are in queue
     Car.all.select do |car|
       car.in_queue == true
     end
   end
 
-  def assign_job #change in future to be more manual
+  def assign_job #Automatically create and Assign Job to Least Busy Mechanic
     prompt = TTY::Prompt.new
     counter = 0
     lowest_queue = 0
@@ -119,7 +119,7 @@ class Manager < ActiveRecord::Base
     end
   end
 
-  def manually_assign_job
+  def manually_assign_job #Manually Create a Job by picking Car and Mechanic
     prompt = TTY::Prompt.new
     list1 = []
     list2 = []
@@ -154,13 +154,13 @@ class Manager < ActiveRecord::Base
     end
   end
 
-  def my_mechanics
+  def my_mechanics #Helper function that finds Mechanics Relevant to self
     Mechanic.all.select do |mechanic|
       mechanic.manager == self
     end
   end
 
-  def fire_mechanic
+  def fire_mechanic #Remove Mechanic Object from DB
     prompt = TTY::Prompt.new
     choices = []
     my_mechanics.map do |mechanic|
@@ -186,7 +186,7 @@ class Manager < ActiveRecord::Base
     end
   end
 
-  def my_mechanics_list
+  def my_mechanics_list #Return list of Mechanics with # of Jobs Assigned
     prompt = TTY::Prompt.new
     counter = 0
     my_mechanics.each do |mechanic|

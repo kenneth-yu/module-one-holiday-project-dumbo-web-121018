@@ -4,7 +4,7 @@ class Mechanic < ActiveRecord::Base
   has_many :jobs
   belongs_to :manager
 
-  def mechanic_options
+  def mechanic_options #Mechanic's "Main Menu"
     prompt = TTY::Prompt.new
     choices = [
       {name: 'Current Jobs'},
@@ -26,13 +26,13 @@ class Mechanic < ActiveRecord::Base
     end
   end
 
-  def relevant_current_jobs
-    relevant_jobs = Job.select do |job|
+  def relevant_current_jobs #returns Jobs Relevant to self that are not complete
+    relevant_jobs = Job.select do |job| #Helper function
       job.mechanic == self && job.status == false
     end
   end
 
-  def jobs
+  def jobs #returns Current Job with Count
     prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
     prompt.ok("You currently have #{relevant_jobs.count} job(s) assigned to you...")
@@ -44,7 +44,7 @@ class Mechanic < ActiveRecord::Base
     self.mechanic_options
   end
 
-  def next_job
+  def next_job #Returns next job if exists
     prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
     if relevant_jobs.count > 1
@@ -55,7 +55,7 @@ class Mechanic < ActiveRecord::Base
     self.mechanic_options
   end
 
-  def work #need to change to find jobs where status is true
+  def work #Looks for first job in queue and marks it as complete with diagnosis.
     prompt = TTY::Prompt.new
     if relevant_current_jobs.empty? == true
       prompt.ok ("There are no more Jobs to complete!")
@@ -65,7 +65,7 @@ class Mechanic < ActiveRecord::Base
         if self == job.mechanic && job.status == false
           response = prompt.ask ("#{job.car.customer.name} complained about the #{job.car.complaint}. What is your diagnosis?")
           job.update(diagnosis: response, status: true)
-          # job.status = true
+          # job.status = true #used update instead
           self.job -= 1
           self.save
           # job.save

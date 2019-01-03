@@ -2,7 +2,7 @@ class Customer < ActiveRecord::Base
 
   has_many :cars
 
-  def customer_options
+  def customer_options #Customer "Main Menu"
     prompt = TTY::Prompt.new
     choices = [
       {name: 'Registered Cars'},
@@ -19,10 +19,9 @@ class Customer < ActiveRecord::Base
         prompt.ok ("#{car.year} #{car.make} #{car.model}")
       end
     elsif response == 'Remove Cars'
-      if owned_cars.empty? == true
+      if my_cars.empty? == true
         prompt.warn("You have no cars to remove!")
         sleep(2)
-        customer_options
       else
         self.remove_car
       end
@@ -36,13 +35,7 @@ class Customer < ActiveRecord::Base
     self.customer_options
   end
 
-  def owned_cars
-    Car.all.select do |car|
-      car.customer == self
-    end
-  end
-
-  def queue_car
+  def queue_car #Add car to queue to be fixed.
     prompt = TTY::Prompt.new
     choices = []
     if my_cars.empty? == true
@@ -66,7 +59,7 @@ class Customer < ActiveRecord::Base
     end
   end
 
-  def add_car
+  def add_car #Add a car that belongs to Customer
     prompt = TTY::Prompt.new
     hash = {}
     response = prompt.ask("What year is the car?")
@@ -82,13 +75,13 @@ class Customer < ActiveRecord::Base
     self.customer_options
   end
 
-  def my_cars
+  def my_cars #Helper function that returns Array of Relevant Cars
      Car.all.select do |car|
       car.customer == self
     end
   end
 
-  def remove_car
+  def remove_car #Removes car objec tthat belongs to Customer
     prompt = TTY::Prompt.new
     choices = []
     my_cars.map do |car|

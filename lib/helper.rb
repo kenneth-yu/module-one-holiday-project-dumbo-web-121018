@@ -18,7 +18,7 @@ EOF
   welcome_prompts
 end
 
-def recursive_customer(input)
+def recursive_customer(input) 
   counter = 0
   prompt = TTY::Prompt.new
   if input == 'Customer'
