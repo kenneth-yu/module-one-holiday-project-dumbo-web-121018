@@ -34,24 +34,24 @@ class Mechanic < ActiveRecord::Base
   def jobs
     prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
-    prompt.say("You currently have #{relevant_jobs.count} job(s) assigned to you")
+    prompt.say("You currently have #{relevant_jobs.count} job(s) assigned to you...")
     if relevant_jobs.count == 0
       prompt.say("Congrats! You don't have any cars to fix!")
     elsif relevant_jobs.count > 0
       prompt.say("Your current job is to fix the #{relevant_jobs[0].car.year} #{relevant_jobs[0].car.make} #{relevant_jobs[0].car.model}. The customer's reason for visit is #{relevant_jobs[0].car.complaint}")
     end
-    mechanic_options
+    self.mechanic_options
   end
 
   def next_job
     prompt = TTY::Prompt.new
     relevant_jobs = relevant_current_jobs
     if relevant_jobs.count > 1
-      prompt.say("Your next job is to fix the #{relevant_jobs[0].car.year} #{relevant_jobs[0].car.make} #{relevant_jobs[0].car.model}. The customer's reason for visit is #{relevant_jobs[1].car.complaint}")
+      prompt.say("Your next job is to fix the #{relevant_jobs[1].car.year} #{relevant_jobs[1].car.make} #{relevant_jobs[1].car.model}. The customer's reason for visit is #{relevant_jobs[1].car.complaint}")
     else
       prompt.say ("Congrats! You have not been assigned another job yet!")
     end
-    mechanic_options
+    self.mechanic_options
   end
 
   def work #need to change to find jobs where status is true
@@ -62,14 +62,16 @@ class Mechanic < ActiveRecord::Base
     else
       completed_job = Job.all.find do |job|
         if self == job.mechanic && job.status == false
-          job.status = true
+          response = prompt.ask ("#{job.car.customer.name} complained about the #{job.car.complaint}. What is your diagnosis?")
+          job.update(diagnosis: response, status: true)
+          # job.status = true
           self.job -= 1
           self.save
-          job.save
+          # job.save
         end
       end
       prompt.say("Job Completed")
-      mechanic_options
+      self.mechanic_options
     end
   end
   # def help  #should not need this thanks to TTY Prompt Gem

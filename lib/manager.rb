@@ -15,11 +15,12 @@ class Manager < ActiveRecord::Base
   def manager_options
     prompt = TTY::Prompt.new
     choices = [
+      {name: "My Mechanics", value: "My Mechanics"},
       {name: "Hire a Mechanic", value: "Hire"},
-      # {name: "My Mechanics", value: "My Mechanics"},
       {name: "Fire a Mechanic", value: "Fire"},
       {name: "Queued Jobs", value: "Jobs"},
       {name: "Assign a Job", value: "Assign"},
+      # {name: "Search Completed Jobs", value: "Search"},
       {name: "Log Out", value: "quit"}
 
     ]
@@ -29,8 +30,8 @@ class Manager < ActiveRecord::Base
       hash = {}
       hash[:name] = response
       self.new_hire(hash)
-    # elsif response == "My Mechanics"
-    #   my_mechanics.
+    elsif response == "My Mechanics"
+      self.my_mechanics_list
     elsif response == "Fire"
       self.fire_mechanic
     elsif response == "Jobs"
@@ -38,6 +39,8 @@ class Manager < ActiveRecord::Base
       self.manager_options
     elsif response == "Assign"
       self.assign_job
+    # elsif response == "Search"
+    #   self.search_completed_job
     else
       exit
     end
@@ -122,16 +125,66 @@ class Manager < ActiveRecord::Base
       choices << {name: mechanic.name, value: mechanic}
     end
     choices << {name: "Exit", value: "Quit"}
-    response = prompt.select("Which Mechanic would you like to fire?", choices)
-    if response == "Quit"
-      exit
+    if my_mechanics.empty? == true
+      prompt.say("There are no Mechanics to fire!")
+      self.manager_options
     else
-      response.destroy
+      response = prompt.select("Which Mechanic would you like to fire?", choices)
+      if response == "Quit"
+        exit
+      else
+        response.destroy
+      end
+      prompt.say("#{response.name} was Fired!")
+      manager_options
     end
-    prompt.say("Mechanic Fired!")
-    manager_options
   end
 
+  def my_mechanics_list
+    prompt = TTY::Prompt.new
+    counter = 0
+    my_mechanics.each do |mechanic|
+      if mechanic.manager == self
+        prompt.say("#{mechanic.name}")
+        counter += 1
+      end
+    end
+    if my_mechanics.empty? == true
+      prompt.say("You don't have any mechanics!")
+      self.manager_options
+    end
+    manager_options
+  end
+#   def search_completed_job
+#     binding.pry
+#     prompt = TTY::Prompt.new
+#     choices = [
+#       {name: "Customer Name", value: "Customer"},
+#       {name: "Car", value: "Car"},
+#       {name: "Mechanic", value: "Mechanic"},
+#     ]
+#     response = prompt.select("What would you like to search by?", choices)
+#     if response == "Customer"
+#       response = prompt.ask("What is the customer's name?")
+#       relevant_jobs = Job.all.select do |job|
+#         job.car.customer.name == response
+#       end
+#       relevant_jobs.map do |job|
+#         prompt.say("Job number #{job.id} was completed by #{job.mechanic.name}. The customer #{job.car.customer.name} complained about #{job.car.complaint}.")
+#       end
+#     elsif response == "Car"
+#
+#
+#     else
+#       response = prompt.ask("What is the mechanic's name?")
+#       relevant_jobs = Job.all.select do |job|
+#         job.mechanic.name == response
+#       end
+#       relevant_jobs.each do |job|
+#         prompt.say("#{reponse}")
+#       end
+#     end
+#   end
 end
 
 

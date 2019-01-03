@@ -1,4 +1,5 @@
 def welcome
+  Gem.win_platform? ? (system "cls") : (system "clear")
   # puts "Welcome to AoR Repair Shop!"
   puts <<-'EOF'
 
@@ -70,6 +71,7 @@ def recursive_manager_search(input)
 end
 
 def welcome_check (input)
+  #Gem.win_platform? ? (system "cls") : (system "clear")
   #prompt = TTY::Prompt.new
   if input == 'Customer'
     return recursive_customer(input)
@@ -103,22 +105,34 @@ def new_or_old (response)
   prompt = TTY::Prompt.new
   if response == "New"
     name = prompt.ask("What is your name?")
-    name = recursive_new_customer(name)
-    hash = {}
-    hash[:name] = name
-    new_customer = Customer.create(hash)
-    return new_customer
+      if name == "back"
+        welcome_prompts
+      elsif name == "exit"
+        exit
+      else
+        name = recursive_new_customer(name)
+        hash = {}
+        hash[:name] = name
+        new_customer = Customer.create(hash)
+        return new_customer
+      end
   elsif response == "Old"
     name = prompt.ask("Welcome back! What is your name?")
-    found_customer = search_customer(name)
-    if found_customer == nil
-      response = prompt.select("Customer not found... Would you like to try again?", %w(Yes No))
-      if response == "Yes"
-        new_or_old('Old')
-      else
-        response = prompt.select("Do you want to pick a different role?", %w(Yes No))
+    if name == "back"
+      welcome_prompts
+    elsif name == "exit"
+      exit
+    else
+      found_customer = search_customer(name)
+      if found_customer == nil
+        response = prompt.select("Customer not found... Would you like to try again?", %w(Yes No))
         if response == "Yes"
-          welcome_prompts
+          new_or_old('Old')
+        else
+          response = prompt.select("Do you want to pick a different role?", %w(Yes No))
+          if response == "Yes"
+            welcome_prompts
+          end
         end
       end
     end
@@ -127,6 +141,7 @@ def new_or_old (response)
 end
 
 def search_customer(name)
+
   found_customer = Customer.all.find do |customer|
     customer.name == name
   end
@@ -135,16 +150,28 @@ end
 def search_manager
   prompt = TTY::Prompt.new
   response = prompt.ask("Which Manager are you?")
-  found_manager = Manager.all.find do |manager|
-    manager.name == response
+  if response == "back"
+    welcome_prompts
+  elsif response == "exit"
+    exit
+  else
+    found_manager = Manager.all.find do |manager|
+      manager.name == response
+    end
   end
 end
 
 def search_mechanic
   prompt = TTY::Prompt.new
   response = prompt.ask("Which Mechanic are you?")
-  found_mechanic = Mechanic.all.find do |mechanic|
-     mechanic.name == response
-   end
-   found_mechanic
+  if response == "back"
+    welcome_prompts
+  elsif response == "exit"
+    exit
+  else
+    found_mechanic = Mechanic.all.find do |mechanic|
+       mechanic.name == response
+     end
+  end
+  found_mechanic
  end

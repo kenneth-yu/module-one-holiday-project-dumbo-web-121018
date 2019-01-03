@@ -8,13 +8,13 @@ Manager.destroy_all
 Mechanic.destroy_all
 
 
-norman = Manager.create(name: "norman")
-mechanic = {name: "wing", manager: norman, job: 0}
+norman = Manager.create(name: "Norman")
+mechanic = {name: "Wing", manager: norman, job: 0}
 wing = Mechanic.create(mechanic)
 #wing = norman.new_hire(name: "wing")
-kenny = Customer.create(name: "kenny")
-car1 = {year: 2001, make:"honda", model:"prelude", customer: kenny,complaint: "suspension"}
-car2 = {year: 2004, make:"mazda", model:"rx-8", customer: kenny, complaint: "engine"}
+kenny = Customer.create(name: "Kenny")
+car1 = {year: 2001, make:"Honda", model:"Prelude", customer: kenny,complaint: "suspension"}
+car2 = {year: 2004, make:"Mazda", model:"Rx-8", customer: kenny, complaint: "engine"}
 lude = Car.create(car1)
 eight = Car.create(car2)
 job1 = {mechanic: wing, car: lude}
