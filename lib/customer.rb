@@ -9,7 +9,8 @@ class Customer < ActiveRecord::Base
       {name: 'Add Cars'},
       {name: 'Remove Cars'},
       {name: 'Queue a Car for Repair', value: "queue"},
-      {name: 'Log out'}
+      {name: 'Log out'},
+      {name: 'Exit Application'}
     ]
     response = prompt.select("What would you like to do?", choices)
     if response == 'Add Cars'
@@ -32,8 +33,12 @@ class Customer < ActiveRecord::Base
       end
     elsif response == "queue"
       queue_car
-    else
+    elsif response == 'Log out'
       prompt.ok ("Logging out! Bye bye!")
+      sleep(2)
+      return welcome
+    else
+      prompt.ok ("Exiting Application! Bye bye!")
       sleep(2)
       exit
     end
@@ -51,10 +56,15 @@ class Customer < ActiveRecord::Base
       my_cars.map do |car|
         choices << {name: "#{car.year.to_s + ' '+ car.make + ' ' + car.model}", value: car}
       end
-      choices << {name: "Exit", value: "Quit"}
+      choices << {name: "Go Back", value: "back"}
+      choices << {name: "Exit Application", value: "Quit"}
       response = prompt.select("Which car would you like to queue?", choices)
       if response == "Quit"
+        prompt.ok ("Exiting Application! Bye bye!")
+        sleep(2)
         exit
+      elsif response == "back"
+        customer_options
       else
         response1 = prompt.ask("What is wrong with the car?")
         response.update(complaint: "#{response1}")
@@ -68,11 +78,35 @@ class Customer < ActiveRecord::Base
     prompt = TTY::Prompt.new
     hash = {}
     response = prompt.ask("What year is the car?")
-    hash[:year] = response
+    if response == "quit"
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
+      exit
+    elsif response == "back"
+      customer_options
+    else
+      hash[:year] = response
+    end
     response = prompt.ask("What make is the car?")
-    hash[:make] = response
+    if response == "quit"
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
+      exit
+    elsif response == "back"
+      customer_options
+    else
+      hash[:make] = response
+    end
     response = prompt.ask("What model is the car?")
-    hash[:model] = response
+    if response == "quit"
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
+      exit
+    elsif response == "back"
+      customer_options
+    else
+      hash[:model] = response
+    end
     hash[:customer] = self
     #Car.new(year, make, model, self)
     Car.create(hash)
@@ -93,9 +127,11 @@ class Customer < ActiveRecord::Base
       choices << {name: "#{car.year.to_s + ' '+ car.make + ' ' + car.model}", value: car}
     end
     choices << {name: "Go Back", value: "back"}
-    choices << {name: "Exit", value: "Quit"}
+    choices << {name: "Exit Application", value: "Quit"}
     response = prompt.select("Which car would you like to remove?", choices)
     if response == "Quit"
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
       exit
     elsif response == "back"
       self.customer_options

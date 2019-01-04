@@ -26,7 +26,7 @@ end
 
 def welcome_check (input)
   #Gem.win_platform? ? (system "cls") : (system "clear")
-  #prompt = TTY::Prompt.new
+  prompt = TTY::Prompt.new
   if input == 'Customer'
     return recursive_customer(input)
   elsif input == 'Mechanic'
@@ -34,6 +34,8 @@ def welcome_check (input)
   elsif input == 'Manager'
     return recursive_manager_search(input)
   else
+    prompt.ok ("Exiting Application. Bye bye!")
+    sleep(2)
     exit
   end
 end
@@ -106,6 +108,8 @@ def new_or_old (response)
     if name == "back"
       welcome_prompts
     elsif name == "exit"
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
       exit
     else
       name = recursive_new_customer(name)
@@ -119,6 +123,8 @@ def new_or_old (response)
     if name == "back"
       welcome_prompts
     elsif name == "exit"
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
       exit
     else
       found_customer = search_customer(name)
@@ -154,6 +160,8 @@ def search_manager
   if response == "back"
     welcome_prompts
   elsif response == "exit"
+    prompt.ok ("Exiting Application! Bye bye!")
+    sleep(2)
     exit
   else
     found_manager = Manager.all.find do |manager|
@@ -168,6 +176,8 @@ def search_mechanic
   if response == "back"
     welcome_prompts
   elsif response == "exit"
+    prompt.ok ("Exiting Application! Bye bye!")
+    sleep(2)
     exit
   else
     found_mechanic = Mechanic.all.find do |mechanic|

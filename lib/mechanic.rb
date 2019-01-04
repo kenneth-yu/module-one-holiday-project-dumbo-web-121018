@@ -10,7 +10,8 @@ class Mechanic < ActiveRecord::Base
       {name: 'Current Jobs'},
       {name: 'Next Job'},
       {name: 'Work'},
-      {name: 'Log out'}
+      {name: 'Log out', value: 'log'},
+      {name: 'Exit Application'}
     ]
     response = prompt.select("What would you like to do?", choices)
     if response == "Current Jobs"
@@ -19,8 +20,12 @@ class Mechanic < ActiveRecord::Base
       self.next_job
     elsif response == 'Work'
       self.work
-    else
+    elsif response == 'log'
       prompt.ok ("Logging out! Bye bye!")
+      sleep(2)
+      welcome
+    else
+      prompt.ok ("Exiting Application! Bye bye!")
       sleep(2)
       exit
     end

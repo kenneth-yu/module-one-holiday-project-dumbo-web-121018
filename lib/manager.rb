@@ -12,7 +12,8 @@ class Manager < ActiveRecord::Base
       {name: "Automatically Assign a Job", value: "QAssign"},
       {name: "Manually Assign a Job", value: "MAssign"},
       # {name: "Search Completed Jobs", value: "Search"},
-      {name: "Log Out", value: "quit"}
+      {name: "Log Out", value: "log"},
+      {name: "Exit Application"}
     ]
     response = prompt.select("What would you like to do?", choices)
     if response == "Hire"
@@ -31,9 +32,15 @@ class Manager < ActiveRecord::Base
       self.assign_job
     elsif response == "MAssign"
       self.manually_assign_job
+    elsif response == "log"
+      prompt.ok ("Logging out! Bye bye!")
+      sleep(2)
+      return welcome
       # elsif response == "Search"
       #   self.search_completed_job
     else
+      prompt.ok ("Exiting Application! Bye bye!")
+      sleep(2)
       exit
     end
   end

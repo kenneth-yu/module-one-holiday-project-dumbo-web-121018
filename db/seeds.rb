@@ -8,21 +8,44 @@ Manager.destroy_all
 Mechanic.destroy_all
 
 
+#Create Manager named "Norman"
 norman = Manager.create(name: "Norman")
+#Create Manager named "Yurman"
+yurman = Manager.create(name: "Yurman")
+
+#Mechanic Hashes used for creating Mechanic Objects
 mechanic = {name: "Wing", manager: norman, job: 0}
+mechanic2 = {name: "Peter", manager: yurman, job: 0}
+
+ #Create Mechanic named "Wing" belongs to "Norman"
 wing = Mechanic.create(mechanic)
-#wing = norman.new_hire(name: "wing")
+peter = Mechanic.create(mechanic2)
+
+#Create Customer named "Kenny"
 kenny = Customer.create(name: "Kenny")
-car1 = {year: 2001, make:"Honda", model:"Prelude", customer: kenny,complaint: "suspension"}
-car2 = {year: 2004, make:"Mazda", model:"Rx-8", customer: kenny, complaint: "engine"}
+#Create Customer named "Calvin"
+calvin = Customer.create(name: "Calvin")
+
+#Car Hashes used for creating Car Objects
+car1 = {year: 2001, make:"Honda", model:"Prelude", customer: kenny,complaint: "Suspension"}
+car2 = {year: 2004, make:"Mazda", model:"Rx-8", customer: kenny, complaint: "Engine"}
+car3 = {year: 2002, make:"Honda", model:"S2000", customer: calvin, complaint:"Brakes"}
+car4 = {year: 2008, make:"Toyota", model:"Rav-4", customer:calvin, complaint:"Radio"}
+
+#Create two cars that belong to "Kenny"
 lude = Car.create(car1)
 eight = Car.create(car2)
+#Create two cars that belong to "Calvin"
+s2 = Car.create(car3)
+rav = Car.create(car4)
+
+#Job hashes used for creating Job Objects
 job1 = {mechanic: wing, car: lude}
-job2 = {mechanic: wing, car: eight}
+job2 = {mechanic: peter, car: eight}
+job3 = {mechanic: wing, car:s2}
+
+#Create a job by assigning Wing as the mechanic
 Job.create(job1)
 Job.create(job2)
-
-# kenny.add_car(car1)
-# kenny.add_car(car2)
-# job1 = norman.assign_job
-# job1.save
+Job.create(job3)
+#NOTE: rav is in queue but not assigned!
