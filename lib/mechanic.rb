@@ -71,8 +71,8 @@ class Mechanic < ActiveRecord::Base
           response = prompt.ask ("#{job.car.customer.name} complained about the #{job.car.complaint}. What is your diagnosis?")
           job.update(diagnosis: response, status: true)
           # job.status = true #used update instead
-          self.job -= 1
-          self.save
+          # self.job -= 1
+          # self.save
           # job.save
         end
       end

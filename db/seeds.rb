@@ -44,8 +44,8 @@ job1 = {mechanic: wing, car: lude}
 job2 = {mechanic: peter, car: eight}
 job3 = {mechanic: wing, car:s2}
 
-#Create a job by assigning Wing as the mechanic
-Job.create(job1)
-Job.create(job2)
-Job.create(job3)
+#Create a job
+Job.create(job1).car.update(in_queue: false)
+Job.create(job2).car.update(in_queue: false)
+Job.create(job3).car.update(in_queue: false)
 #NOTE: rav is in queue but not assigned!

@@ -142,7 +142,7 @@ class Manager < ActiveRecord::Base
         list1 << {name: "#{car.year} #{car.make} #{car.model}", value: car}
       end
       Mechanic.all.each do |mechanic|
-        list2 << {name: "#{mechanic.name} - #{mechanic.job} job(s) assigned", value: mechanic}
+        list2 << {name: "#{mechanic.name} - #{mechanic.relevant_current_jobs.count} job(s) assigned", value: mechanic}
       end
       list1 << {name: "Go Back"}
       list2 << {name: "Go Back"}
@@ -162,8 +162,8 @@ class Manager < ActiveRecord::Base
       hash[:diagnosis] = "To be determined..."
       Job.create(hash)
       prompt.ok("Job Assigned!")
-      response2.job += 1
-      response2.save
+      # response2.job += 1
+      # response2.save
       sleep(2)
       manager_options
     end
